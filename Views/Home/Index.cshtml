@@ -1,0 +1,82 @@
+@* The view receives a list of Doctor objects from the controller *@
+@model List<Doctor>
+@{
+    ViewData["Title"] = "Doctors"; // Sets the browser tab title
+    // Read the values placed in ViewBag by the controller
+    string? patientName = ViewBag.PatientName as string;          // Patient name read from the COOKIE
+    string selected = (string)ViewBag.SelectedSpecialization;     // Specialization stored in the SESSION (or "All")
+    var specializations = (List<string>)ViewBag.Specializations;  // Items for the dropdown
+    bool fromCache = (bool)ViewBag.FromCache;                     // true when the list came from IMemoryCache
+}
+
+<h2>Doctor Information</h2>
+
+@* Show the message sent from the Book action through TempData (if any) *@
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-warning">@TempData["Message"]</div>
+}
+
+@* ---------- COOKIE: store the patient name ---------- *@
+<div class="card mb-3">
+    <div class="card-body">
+        <form asp-action="SetPatient" method="post" class="row g-2" asp-antiforgery="false"> @* POST to HomeController.SetPatient *@
+            <div class="col-auto"><label class="col-form-label">Patient name:</label></div>
+            <div class="col-auto"><input type="text" name="patientName" class="form-control" required /></div> @* name must match the action parameter *@
+            <div class="col-auto"><button type="submit" class="btn btn-primary">Save (Cookie)</button></div>
+        </form>
+        @if (!string.IsNullOrEmpty(patientName))
+        {
+            <p class="mt-2 mb-0">Name stored in cookie: <strong>@patientName</strong></p> @* Shows value read from the cookie *@
+        }
+    </div>
+</div>
+
+@* ---------- SESSION: store the selected specialization ---------- *@
+<form asp-action="Index" method="get" class="row g-2 mb-3"> @* GET so the choice appears in the query string *@
+    <div class="col-auto"><label class="col-form-label">Specialization:</label></div>
+    <div class="col-auto">
+        <select name="specialization" class="form-select"> @* name must match the Index(string? specialization) parameter *@
+            <option value="All" selected="@(selected == "All")">All</option>
+            @foreach (var s in specializations)
+            {
+                <option value="@s" selected="@(selected == s)">@s</option> @* One option per specialization *@
+            }
+        </select>
+    </div>
+    <div class="col-auto"><button type="submit" class="btn btn-secondary">Filter (Session)</button></div>
+</form>
+<p>Specialization stored in session: <strong>@selected</strong></p> @* Shows the value read from the session *@
+
+@* Information about IMemoryCache *@
+<p class="text-muted">
+    Doctor list loaded from: <strong>@(fromCache ? "IMemoryCache (cache hit)" : "Service (cache miss - now cached for 3 minutes)")</strong>
+    | Page generated at @ViewBag.ServerTime
+</p>
+
+@* ---------- Doctor table ---------- *@
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th><th>Name</th><th>Specialization</th><th>Experience (yrs)</th>
+            <th>Consultation Fee</th><th>Total Charge (Fee + ₹100)</th><th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var doctor in Model) @* Loop through every doctor in the model *@
+        {
+            <tr>
+                <td>@doctor.DoctorId</td>
+                <td>@doctor.DoctorName</td>
+                <td>@doctor.Specialization</td>
+                <td>@doctor.Experience</td>
+                <td>₹@doctor.ConsultationFee.ToString("N2")</td> @* Fee formatted with 2 decimals *@
+                <td>₹@doctor.CalculateTotalCharge().ToString("N2")</td> @* Calls the EXTENSION METHOD *@
+                <td>
+                    @* QUERY STRING: generates /Home/Details?doctorId=1 *@
+                    <a class="btn btn-sm btn-success" asp-action="Details" asp-route-doctorId="@doctor.DoctorId">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

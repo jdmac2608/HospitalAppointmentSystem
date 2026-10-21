@@ -1,0 +1,6 @@
+@* Namespaces imported into every Razor view so we do not repeat @using in each file *@
+@using HospitalAppointmentSystem
+@using HospitalAppointmentSystem.Models
+@using HospitalAppointmentSystem.Extensions
+@* Enables tag helpers such as asp-action, asp-controller, asp-route-* in all views *@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers

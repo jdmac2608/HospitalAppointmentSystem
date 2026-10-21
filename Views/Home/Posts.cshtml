@@ -1,0 +1,30 @@
+@* The view receives the list of posts downloaded asynchronously *@
+@model List<Post>
+@{
+    ViewData["Title"] = "Posts"; // Browser tab title
+}
+
+<h2>Posts from JSONPlaceholder API</h2>
+
+@* Show an error message only if the controller set ViewBag.Error *@
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+
+<p>Total posts: <strong>@Model.Count</strong></p> @* Number of posts received *@
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr><th>Post ID</th><th>Title</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var post in Model) @* One row for every post *@
+        {
+            <tr>
+                <td>@post.Id</td>
+                <td>@post.Title</td>
+            </tr>
+        }
+    </tbody>
+</table>

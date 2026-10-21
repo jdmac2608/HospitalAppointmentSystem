@@ -1,0 +1,20 @@
+@* The view receives the submitted appointment form data *@
+@model AppointmentRequest
+@{
+    ViewData["Title"] = "Appointment Confirmed"; // Browser tab title
+    Doctor doctor = (Doctor)ViewBag.Doctor; // Doctor object found with the hidden-field id
+}
+
+<h2>Appointment Request Received</h2>
+
+<table class="table table-bordered w-75">
+    <tr><th>Patient Name (from Cookie)</th><td>@ViewBag.PatientName</td></tr>
+    <tr><th>Selected Specialization (from Session)</th><td>@ViewBag.Specialization</td></tr>
+    <tr><th>Doctor ID (from Hidden Field)</th><td>@Model.DoctorId</td></tr>
+    <tr><th>Doctor</th><td>@doctor.DoctorName (@doctor.Specialization)</td></tr>
+    <tr><th>Appointment Date</th><td>@Model.AppointmentDate.ToString("dd MMM yyyy")</td></tr>
+    <tr><th>Reason</th><td>@Model.Reason</td></tr>
+    <tr><th>Total Charge</th><td><strong>₹@doctor.CalculateTotalCharge().ToString("N2")</strong></td></tr> @* EXTENSION METHOD *@
+</table>
+
+<a asp-action="Index" class="btn btn-primary">Back to Doctors</a>

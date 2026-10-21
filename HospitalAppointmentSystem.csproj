@@ -1,0 +1,10 @@
+<!-- Project file: tells the .NET SDK how to build this application -->
+<Project Sdk="Microsoft.NET.Sdk.Web"> <!-- Web SDK = ASP.NET Core web application -->
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework> <!-- .NET version used (change to net9.0 / net10.0 if you only have a newer SDK) -->
+    <Nullable>enable</Nullable> <!-- Enables nullable reference type warnings -->
+    <ImplicitUsings>enable</ImplicitUsings> <!-- Auto-imports common namespaces (System, System.Linq, etc.) -->
+  </PropertyGroup>
+
+</Project>

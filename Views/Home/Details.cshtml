@@ -1,0 +1,37 @@
+@* The view receives one Doctor object *@
+@model Doctor
+@{
+    ViewData["Title"] = "Doctor Details"; // Browser tab title
+}
+
+<h2>Doctor Details</h2>
+
+@* Show when the page was created; it stays the same for 60 seconds because of Response Caching *@
+<p class="text-muted">Page generated at: <strong>@ViewBag.GeneratedAt</strong> (refresh within 60 seconds - time will not change)</p>
+
+<table class="table table-bordered w-50">
+    <tr><th>Doctor ID</th><td>@Model.DoctorId</td></tr>
+    <tr><th>Name</th><td>@Model.DoctorName</td></tr>
+    <tr><th>Specialization</th><td>@Model.Specialization</td></tr>
+    <tr><th>Experience</th><td>@Model.Experience years</td></tr>
+    <tr><th>Consultation Fee</th><td>₹@Model.ConsultationFee.ToString("N2")</td></tr>
+    <tr><th>Total Charge (Fee + ₹100)</th><td><strong>₹@Model.CalculateTotalCharge().ToString("N2")</strong></td></tr> @* EXTENSION METHOD *@
+</table>
+
+<h4>Book Appointment</h4>
+@* asp-antiforgery="false" stops the antiforgery cookie, which would otherwise prevent response caching *@
+<form asp-action="Book" method="post" asp-antiforgery="false" class="w-50">
+    @* HIDDEN FIELD: sends the DoctorId with the form; the name must match AppointmentRequest.DoctorId *@
+    <input type="hidden" name="DoctorId" value="@Model.DoctorId" />
+
+    <div class="mb-3">
+        <label class="form-label">Appointment Date</label>
+        <input type="date" name="AppointmentDate" class="form-control" required /> @* Binds to AppointmentRequest.AppointmentDate *@
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Reason for Visit</label>
+        <input type="text" name="Reason" class="form-control" required /> @* Binds to AppointmentRequest.Reason *@
+    </div>
+    <button type="submit" class="btn btn-primary">Book Appointment</button>
+    <a asp-action="Index" class="btn btn-link">Back to list</a>
+</form>
